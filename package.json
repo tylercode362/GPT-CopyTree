@@ -29,11 +29,31 @@
           "name": "File Tree"
         }
       ]
+    },
+    "commands": [
+      {
+        "command": "GPT-CopyTree.refresh",
+        "title": "Refresh",
+        "icon": {
+          "light": "media/clear_inverse.svg",
+          "dark": "media/clear.svg"
+        }
+      },
+      {
+        "command": "GPT-CopyTree.toggleSelect",
+        "title": "Toggle Select"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "GPT-CopyTree.refresh",
+          "group": "navigation",
+          "when": "view == gpt-copytree-panel"
+        }
+      ]
     }
   },
-  "activationEvents": [
-    "onCommand:GPT-CopyTree.create"
-  ],
   "devDependencies": {
     "@types/glob": "^8.1.0",
     "@types/mocha": "^10.0.1",
