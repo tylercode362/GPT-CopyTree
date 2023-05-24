@@ -5,10 +5,11 @@ export interface FileItem {
   name: string;
   path: string;
   isDirectory: boolean;
+  parent?: FileItem;
   children?: FileItem[];
 }
 
-export function getFilesAndDirectories(filePath: string): FileItem[] {
+export function getFilesAndDirectories(filePath: string, parent?: FileItem): FileItem[] {
   const itemNames = fs.readdirSync(filePath);
   const items: FileItem[] = itemNames.map(name => {
     const itemPath = path.join(filePath, name);
@@ -17,9 +18,10 @@ export function getFilesAndDirectories(filePath: string): FileItem[] {
       name,
       path: itemPath,
       isDirectory,
+      parent
     };
     if (isDirectory) {
-      item.children = getFilesAndDirectories(itemPath);
+      item.children = getFilesAndDirectories(itemPath, item);
     }
     return item;
   });

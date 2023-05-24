@@ -29,14 +29,19 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
 
     if (element.isDirectory) {
       treeItem.iconPath = new vscode.ThemeIcon("folder");
+
+      const selectedCount = this.getSelectedCount(element);
+      if (selectedCount > 0) {
+        treeItem.description = `(${selectedCount}) selected`;
+      }
     } else {
       treeItem.iconPath = new vscode.ThemeIcon("file");
-    }
 
-    if (this.isSelected(element)) {
-      treeItem.description = "✅";
-    } else {
-      treeItem.description = "☑️";
+      if (this.isSelected(element)) {
+        treeItem.description = "✅";
+      } else {
+        treeItem.description = "☑️";
+      }
     }
 
     return treeItem;
@@ -44,7 +49,7 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
 
   getChildren(element?: FileItem): Thenable<FileItem[]> {
     if (element) {
-      return Promise.resolve(getFilesAndDirectories(element.path));
+      return Promise.resolve(getFilesAndDirectories(element.path, element));
     } else {
       const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
       return Promise.resolve(workspaceFolder ? getFilesAndDirectories(workspaceFolder.uri.fsPath) : []);
@@ -54,14 +59,39 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
   select(item: FileItem): void {
     this.selectedItems.add(item.path);
     this.refresh(item);
+    this.refreshParents(item);
   }
 
   deselect(item: FileItem): void {
     this.selectedItems.delete(item.path);
     this.refresh(item);
+    this.refreshParents(item);
   }
 
   isSelected(item: FileItem): boolean {
     return this.selectedItems.has(item.path);
+  }
+
+  getSelectedCount(item: FileItem): number {
+    if (!item.children) {
+      return 0;
+    }
+    let count = 0;
+    for (const child of item.children) {
+      if (child.isDirectory) {
+        count += this.getSelectedCount(child);
+      } else if (this.isSelected(child)) {
+        count++;
+      }
+    }
+    return count;
+  }
+
+  private refreshParents(item: FileItem): void {
+    let parent = item.parent;
+    while (parent) {
+      this.refresh(parent);
+      parent = parent.parent;
+    }
   }
 }
