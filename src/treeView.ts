@@ -7,6 +7,13 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
 
   private selectedItems: Set<string> = new Set();
 
+  constructor(private workspaceState: vscode.Memento) {
+    const storedSelectedItems = this.workspaceState.get<string[]>('selectedItems');
+    if (storedSelectedItems) {
+      this.selectedItems = new Set(storedSelectedItems);
+    }
+  }
+
   refresh(item?: FileItem): void {
     this._onDidChangeTreeData.fire(item);
   }
@@ -58,12 +65,14 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
 
   select(item: FileItem): void {
     this.selectedItems.add(item.path);
+    this.workspaceState.update('selectedItems', Array.from(this.selectedItems));
     this.refresh(item);
     this.refreshParents(item);
   }
 
   deselect(item: FileItem): void {
     this.selectedItems.delete(item.path);
+    this.workspaceState.update('selectedItems', Array.from(this.selectedItems));
     this.refresh(item);
     this.refreshParents(item);
   }

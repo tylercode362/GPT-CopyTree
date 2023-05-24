@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { FileTreeProvider } from './treeView';
 
 export function activate(context: vscode.ExtensionContext) {
-  const fileTreeProvider = new FileTreeProvider();
+  const fileTreeProvider = new FileTreeProvider(context.workspaceState);
   vscode.window.createTreeView('gpt-copytree-panel', { treeDataProvider: fileTreeProvider });
 
   context.subscriptions.push(
