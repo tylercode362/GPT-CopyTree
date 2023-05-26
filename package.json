@@ -40,6 +40,14 @@
         }
       },
       {
+        "command": "GPT-CopyTree.export",
+        "title": "Export",
+        "icon": {
+          "light": "media/clear_inverse.svg",
+          "dark": "media/clear.svg"
+        }
+      },
+      {
         "command": "GPT-CopyTree.toggleSelect",
         "title": "Toggle Select"
       }
@@ -48,6 +56,11 @@
       "view/title": [
         {
           "command": "GPT-CopyTree.refresh",
+          "group": "navigation",
+          "when": "view == gpt-copytree-panel"
+        },
+        {
+          "command": "GPT-CopyTree.export",
           "group": "navigation",
           "when": "view == gpt-copytree-panel"
         }

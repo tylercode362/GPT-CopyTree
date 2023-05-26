@@ -13,7 +13,17 @@ export function activate(context: vscode.ExtensionContext) {
         fileTreeProvider.select(fileItem);
       }
     }),
-    vscode.commands.registerCommand('GPT-CopyTree.refresh', () => fileTreeProvider.refreshAll())
+    vscode.commands.registerCommand('GPT-CopyTree.refresh', () => fileTreeProvider.refreshAll()),
+		vscode.commands.registerCommand('GPT-CopyTree.export', () => {
+      const panel = vscode.window.createWebviewPanel(
+        'gpt-copytree-export',
+        'Exported Selection',
+        vscode.ViewColumn.One,
+        {}
+      );
+
+      panel.webview.html = fileTreeProvider.exportSelection();
+    })
   );
 }
 

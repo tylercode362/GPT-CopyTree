@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import * as path from 'path';
 import { getFilesAndDirectories, FileItem } from './fileSystem';
 
 export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
@@ -102,5 +103,41 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
       this.refresh(parent);
       parent = parent.parent;
     }
+  }
+
+  private findChildItem(parent: FileItem, name: string): FileItem | null {
+    if (!parent.children) {
+      return null;
+    }
+    for (const child of parent.children) {
+      if (child.name === name) {
+        return child;
+      }
+    }
+    return null;
+  }
+
+  exportSelection(): string {
+    let html = '<html><body><pre>';
+
+    const workspaceFolders = vscode.workspace.workspaceFolders;
+    if (!workspaceFolders) {
+      throw new Error('No workspace folder is open');
+    }
+
+    const workspaceRootPath = workspaceFolders[0].uri.fsPath;
+
+    for (const selectedItemPath of Array.from(this.selectedItems)) {
+      const relativePath = path.relative(workspaceRootPath, selectedItemPath);
+      html += this.exportItem(relativePath, 0);
+    }
+
+    html += '</pre></body></html>';
+    console.log("HTML content: " + html);
+    return html;
+  }
+
+  private exportItem(relativePath: string, level: number): string {
+    return '<div>' + relativePath + '</div>';
   }
 }
