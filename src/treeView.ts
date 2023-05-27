@@ -1,6 +1,8 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
+import * as fs from 'fs';
 import { getFilesAndDirectories, FileItem } from './fileSystem';
+const { isText } = require('istextorbinary')
 
 export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
   private _onDidChangeTreeData: vscode.EventEmitter<FileItem | undefined | null | void> = new vscode.EventEmitter<FileItem | undefined | null | void>();
@@ -30,7 +32,7 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
     );
 
     treeItem.command = {
-      command: 'GPT-CopyTree.toggleSelect',
+      command: 'gpt-copytree.toggleSelect',
       arguments: [element],
       title: 'Toggle Select'
     };
@@ -126,18 +128,30 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
     }
 
     const workspaceRootPath = workspaceFolders[0].uri.fsPath;
+    const largeNonTextFiles = [];
+    const textFiles = [];
 
     for (const selectedItemPath of Array.from(this.selectedItems)) {
       const relativePath = path.relative(workspaceRootPath, selectedItemPath);
-      html += this.exportItem(relativePath, 0);
+      const fileContent = fs.readFileSync(selectedItemPath);
+      if (fs.statSync(selectedItemPath).size > 10 * 1024 * 1024 || !isText(selectedItemPath, fileContent)) {
+        largeNonTextFiles.push(this.exportItem(relativePath));
+      } else {
+        textFiles.push(this.exportItem(relativePath));
+      }
     }
 
+    largeNonTextFiles.sort();
+    textFiles.sort();
+
+    html += largeNonTextFiles.join('');
+    html += textFiles.join('');
     html += '</pre></body></html>';
     console.log("HTML content: " + html);
     return html;
   }
 
-  private exportItem(relativePath: string, level: number): string {
+  private exportItem(relativePath: string): string {
     return '<div>' + relativePath + '</div>';
   }
 }
