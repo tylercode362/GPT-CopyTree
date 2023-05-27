@@ -1,5 +1,5 @@
 {
-  "name": "GPT-CopyTree",
+  "name": "gpt-copytree",
   "displayName": "GPT-CopyTree",
   "description": "A VSCode Extension to show files and directories in a tree view",
   "version": "0.0.1",
@@ -32,7 +32,7 @@
     },
     "commands": [
       {
-        "command": "GPT-CopyTree.refresh",
+        "command": "gpt-copytree.refresh",
         "title": "Refresh",
         "icon": {
           "light": "media/clear_inverse.svg",
@@ -40,7 +40,7 @@
         }
       },
       {
-        "command": "GPT-CopyTree.export",
+        "command": "gpt-copytree.export",
         "title": "Export",
         "icon": {
           "light": "media/clear_inverse.svg",
@@ -48,19 +48,19 @@
         }
       },
       {
-        "command": "GPT-CopyTree.toggleSelect",
+        "command": "gpt-copytree.toggleSelect",
         "title": "Toggle Select"
       }
     ],
     "menus": {
       "view/title": [
         {
-          "command": "GPT-CopyTree.refresh",
+          "command": "gpt-copytree.refresh",
           "group": "navigation",
           "when": "view == gpt-copytree-panel"
         },
         {
-          "command": "GPT-CopyTree.export",
+          "command": "gpt-copytree.export",
           "group": "navigation",
           "when": "view == gpt-copytree-panel"
         }
@@ -76,6 +76,7 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
-    "@types/vscode": "^1.78.0"
+    "@types/vscode": "^1.78.0",
+    "istextorbinary": "^6.0.0"
   }
 }
