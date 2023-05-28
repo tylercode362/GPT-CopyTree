@@ -13,6 +13,16 @@
   },
   "main": "./out/extension.js",
   "contributes": {
+    "configuration": {
+      "title": "GPT-CopyTree Settings",
+      "properties": {
+        "gpt-copytree.characterLimit": {
+          "type": "number",
+          "default": 3700,
+          "description": "The character limit for each copy section."
+        }
+      }
+    },
     "viewsContainers": {
       "activitybar": [
         {

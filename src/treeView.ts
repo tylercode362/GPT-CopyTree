@@ -31,11 +31,19 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
       element.isDirectory ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None
     );
 
-    treeItem.command = {
-      command: 'gpt-copytree.toggleSelect',
-      arguments: [element],
-      title: 'Toggle Select'
-    };
+    if (!element.isDirectory) {
+      treeItem.command = {
+        command: 'gpt-copytree.toggleSelect',
+        arguments: [element],
+        title: 'Toggle Select'
+      };
+
+      if (this.isSelected(element)) {
+        treeItem.description = "✅";
+      } else {
+        treeItem.description = "☑️";
+      }
+    }
 
     if (element.isDirectory) {
       treeItem.iconPath = new vscode.ThemeIcon("folder");
@@ -46,16 +54,11 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
       }
     } else {
       treeItem.iconPath = new vscode.ThemeIcon("file");
-
-      if (this.isSelected(element)) {
-        treeItem.description = "✅";
-      } else {
-        treeItem.description = "☑️";
-      }
     }
 
     return treeItem;
   }
+
 
   getChildren(element?: FileItem): Thenable<FileItem[]> {
     if (element) {
@@ -107,21 +110,18 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
     }
   }
 
-  private findChildItem(parent: FileItem, name: string): FileItem | null {
-    if (!parent.children) {
-      return null;
-    }
-    for (const child of parent.children) {
-      if (child.name === name) {
-        return child;
+  toggleSelect(item: FileItem): void {
+    if (!item.isDirectory) {
+      if (this.isSelected(item)) {
+        this.deselect(item);
+      } else {
+        this.select(item);
       }
     }
-    return null;
   }
 
-  exportSelection(): string {
-    let html = '<html><body><pre>';
 
+  exportSelection(): string {
     const workspaceFolders = vscode.workspace.workspaceFolders;
     if (!workspaceFolders) {
       throw new Error('No workspace folder is open');
@@ -133,25 +133,56 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
 
     for (const selectedItemPath of Array.from(this.selectedItems)) {
       const relativePath = path.relative(workspaceRootPath, selectedItemPath);
-      const fileContent = fs.readFileSync(selectedItemPath);
-      if (fs.statSync(selectedItemPath).size > 10 * 1024 * 1024 || !isText(selectedItemPath, fileContent)) {
-        largeNonTextFiles.push(this.exportItem(relativePath));
+      if (fs.statSync(selectedItemPath).isDirectory()) {
+        largeNonTextFiles.push(relativePath);
       } else {
-        textFiles.push(this.exportItem(relativePath));
+        const fileContent = fs.readFileSync(selectedItemPath);
+        if (fs.statSync(selectedItemPath).size > 10 * 1024 * 1024 || !isText(selectedItemPath, fileContent)) {
+          largeNonTextFiles.push(relativePath);
+        } else {
+          const textContent = fs.readFileSync(selectedItemPath, 'utf8');
+          textFiles.push({ name: relativePath, content: textContent });
+        }
       }
     }
 
     largeNonTextFiles.sort();
-    textFiles.sort();
+    textFiles.sort((a, b) => a.name.localeCompare(b.name));
 
-    html += largeNonTextFiles.join('');
-    html += textFiles.join('');
-    html += '</pre></body></html>';
-    console.log("HTML content: " + html);
+    const characterLimit = vscode.workspace.getConfiguration().get<number>('gpt-copytree.characterLimit')!;
+    let currentCharCount = 0;
+    let textAreaContent = '';
+    let html = '<html><body>';
+
+    largeNonTextFiles.forEach(file => {
+      if (currentCharCount + file.length + 1 > characterLimit) {
+        html += `<textarea style="width: 100%; height: 300px;">${textAreaContent}</textarea><div>${currentCharCount} characters</div><button onclick="navigator.clipboard.writeText(document.getElementsByTagName('textarea')[0].value)">Copy</button>`;
+        textAreaContent = '';
+        currentCharCount = 0;
+      }
+      textAreaContent += file + '\n';
+      currentCharCount += file.length + 1;
+    });
+
+    textFiles.forEach((textFile, index) => {
+      const lines = textFile.content.split('\n');
+      lines.unshift(textFile.name);
+      lines.forEach(line => {
+        if (currentCharCount + line.length + 1 > characterLimit) {
+          html += `<textarea style="width: 100%; height: 300px;">${textAreaContent}</textarea><div>${currentCharCount} characters</div><button onclick="navigator.clipboard.writeText(document.getElementsByTagName('textarea')[${index}].value)">Copy</button>`;
+          textAreaContent = '';
+          currentCharCount = 0;
+        }
+        textAreaContent += line + '\n';
+        currentCharCount += line.length + 1;
+      });
+    });
+
+    if (textAreaContent) {
+      html += `<textarea style="width: 100%; height: 300px;">${textAreaContent}</textarea><div>${currentCharCount} characters</div><button onclick="navigator.clipboard.writeText(document.getElementsByTagName('textarea')[textFiles.length].value)">Copy</button>`;
+    }
+
+    html += '</body></html>';
     return html;
-  }
-
-  private exportItem(relativePath: string): string {
-    return '<div>' + relativePath + '</div>';
   }
 }
