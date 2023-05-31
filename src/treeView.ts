@@ -111,8 +111,8 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
   }
 
   private addHtmlSegment(textAreaContent: string, currentCharCount: number, startContent: string, endContent: string): string {
-    const htmlContent = textAreaContent.replace(/\n/g, '<br>\n');
-    return `<div class='copyCard'><div class='tools'><span class='charCount'>${currentCharCount} characters</span><button onclick="navigator.clipboard.writeText(document.getElementsByTagName('textarea')[0].value.replace(/<br>/g, '\\n'))">Copy</button></div><div class='content'>${startContent}${htmlContent}${endContent}</div></div>`;
+    const htmlContent = textAreaContent.replace(/\n/g, '<br>');
+    return `<div class='copyCard'><div class='tools'><span class='charCount'>${currentCharCount} characters</span><button id="copyButton" onclick="copyToClipboard(this)">Copy</button></div><code class='content'>${startContent}${htmlContent}${endContent}</code></div>`;
   }
 
 
@@ -131,8 +131,8 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
   }
 
   exportSelection(): string {
-    const exportStartContent = vscode.workspace.getConfiguration().get<string>('gpt-copytree.exportStartContent')!;
-    const exportContinueContent = vscode.workspace.getConfiguration().get<string>('gpt-copytree.exportContinueContent')!;
+    const exportStartContent = vscode.workspace.getConfiguration().get<string>('gpt-copytree.exportStartContent')! + '\n';
+    const exportContinueContent = vscode.workspace.getConfiguration().get<string>('gpt-copytree.exportContinueContent')! + '\n';
 
     const workspaceFolders = vscode.workspace.workspaceFolders;
     if (!workspaceFolders) {
@@ -167,6 +167,31 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
     let html = '<html><body>';
     let startContent = exportStartContent
     let endContent = exportContinueContent
+
+
+    html += `
+      <script>
+        const copyToClipboard = (button) => {
+          const parent = button.parentElement.parentElement;
+          const contentElement = parent.querySelector('.content');
+          const textToCopy = contentElement.innerHTML.replace(/<br>/g, '\\n');
+
+          const tempTextarea = document.createElement('textarea');
+          tempTextarea.value = textToCopy;
+          document.body.appendChild(tempTextarea);
+
+          tempTextarea.select();
+          document.execCommand('copy');
+
+          document.body.removeChild(tempTextarea);
+
+          button.textContent = 'Copied';
+
+          setTimeout(() => {
+              button.textContent = 'Copy';
+          }, 1000);
+        }
+      </script>`;
 
     largeNonTextFiles.forEach(file => {
       if (currentCharCount + file.length + 1 > characterLimit) {

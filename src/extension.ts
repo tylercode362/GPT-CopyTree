@@ -19,7 +19,9 @@ export function activate(context: vscode.ExtensionContext) {
         'gpt-copytree-export',
         'Exported Selection',
         vscode.ViewColumn.One,
-        {}
+        {
+          enableScripts: true,
+        }
       );
 
       panel.webview.html = fileTreeProvider.exportSelection();
