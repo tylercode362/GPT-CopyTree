@@ -13,7 +13,8 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
   constructor(private workspaceState: vscode.Memento) {
     const storedSelectedItems = this.workspaceState.get<string[]>('selectedItems');
     if (storedSelectedItems) {
-      this.selectedItems = new Set(storedSelectedItems);
+      this.selectedItems = new Set(storedSelectedItems.filter(fs.existsSync));
+      this.workspaceState.update('selectedItems', Array.from(this.selectedItems));
     }
   }
 
@@ -144,6 +145,10 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
     const textFiles = [];
 
     for (const selectedItemPath of Array.from(this.selectedItems)) {
+      if (!fs.existsSync(selectedItemPath)) {
+        continue;
+      }
+
       const relativePath = path.relative(workspaceRootPath, selectedItemPath);
       if (fs.statSync(selectedItemPath).isDirectory()) {
         largeNonTextFiles.push(relativePath);

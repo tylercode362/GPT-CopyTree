@@ -22,7 +22,7 @@
       "properties": {
         "gpt-copytree.characterLimit": {
           "type": "number",
-          "default": 10000,
+          "default": 12000,
           "description": "The character limit for each copy section."
         },
         "gpt-copytree.exportStartContent": {
