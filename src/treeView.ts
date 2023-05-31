@@ -110,6 +110,12 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
     }
   }
 
+  private addHtmlSegment(textAreaContent: string, currentCharCount: number, startContent: string, endContent: string): string {
+    const htmlContent = textAreaContent.replace(/\n/g, '<br>\n');
+    return `<div class='copyCard'><div class='tools'><span class='charCount'>${currentCharCount} characters</span><button onclick="navigator.clipboard.writeText(document.getElementsByTagName('textarea')[0].value.replace(/<br>/g, '\\n'))">Copy</button></div><div class='content'>${startContent}${htmlContent}${endContent}</div></div>`;
+  }
+
+
   toggleSelect(item: FileItem): void {
     if (!item.isDirectory) {
       if (this.isSelected(item)) {
@@ -120,8 +126,14 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
     }
   }
 
+  escapeHTML(html: string) {
+    return html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
 
   exportSelection(): string {
+    const exportStartContent = vscode.workspace.getConfiguration().get<string>('gpt-copytree.exportStartContent')!;
+    const exportContinueContent = vscode.workspace.getConfiguration().get<string>('gpt-copytree.exportContinueContent')!;
+
     const workspaceFolders = vscode.workspace.workspaceFolders;
     if (!workspaceFolders) {
       throw new Error('No workspace folder is open');
@@ -141,7 +153,7 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
           largeNonTextFiles.push(relativePath);
         } else {
           const textContent = fs.readFileSync(selectedItemPath, 'utf8');
-          textFiles.push({ name: relativePath, content: textContent });
+          textFiles.push({ name: relativePath, content: this.escapeHTML(textContent) });
         }
       }
     }
@@ -153,10 +165,14 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
     let currentCharCount = 0;
     let textAreaContent = '';
     let html = '<html><body>';
+    let startContent = exportStartContent
+    let endContent = exportContinueContent
 
     largeNonTextFiles.forEach(file => {
       if (currentCharCount + file.length + 1 > characterLimit) {
-        html += `<textarea style="width: 100%; height: 300px;">${textAreaContent}</textarea><div>${currentCharCount} characters</div><button onclick="navigator.clipboard.writeText(document.getElementsByTagName('textarea')[0].value)">Copy</button>`;
+        const configContentCharCount = (startContent + endContent).length
+        html += this.addHtmlSegment(textAreaContent, currentCharCount + configContentCharCount, startContent, endContent);
+        startContent = '';
         textAreaContent = '';
         currentCharCount = 0;
       }
@@ -169,17 +185,20 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
       lines.unshift(textFile.name);
       lines.forEach(line => {
         if (currentCharCount + line.length + 1 > characterLimit) {
-          html += `<textarea style="width: 100%; height: 300px;">${textAreaContent}</textarea><div>${currentCharCount} characters</div><button onclick="navigator.clipboard.writeText(document.getElementsByTagName('textarea')[${index}].value)">Copy</button>`;
+          const configContentCharCount = (startContent + endContent).length
+          html += this.addHtmlSegment(textAreaContent, currentCharCount + configContentCharCount, startContent, endContent);
+          startContent = '';
           textAreaContent = '';
           currentCharCount = 0;
         }
+
         textAreaContent += line + '\n';
         currentCharCount += line.length + 1;
       });
     });
 
     if (textAreaContent) {
-      html += `<textarea style="width: 100%; height: 300px;">${textAreaContent}</textarea><div>${currentCharCount} characters</div><button onclick="navigator.clipboard.writeText(document.getElementsByTagName('textarea')[textFiles.length].value)">Copy</button>`;
+      html += this.addHtmlSegment(textAreaContent, currentCharCount, startContent, '');
     }
 
     html += '</body></html>';
