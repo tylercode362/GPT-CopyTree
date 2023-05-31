@@ -11,6 +11,10 @@
     "compile": "tsc -watch -p ./",
     "test": "yarn compile && node ./out/test/runTest.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tylercode362/GPT-CopyTree.git"
+  },
   "main": "./out/extension.js",
   "contributes": {
     "configuration": {
@@ -18,8 +22,18 @@
       "properties": {
         "gpt-copytree.characterLimit": {
           "type": "number",
-          "default": 3700,
+          "default": 14500,
           "description": "The character limit for each copy section."
+        },
+        "gpt-copytree.exportStartContent": {
+          "type": "string",
+          "default": "Retain these codes, do not relay them back to me immediately.",
+          "description": "Set the starting content for the export."
+        },
+        "gpt-copytree.exportContinueContent": {
+          "type": "string",
+          "default": "The subsequent code will follow in the next request, please wait for my instructions, GPT.",
+          "description": "Set the ending content for the export if more code exists."
         }
       }
     },
@@ -77,6 +91,10 @@
       ]
     }
   },
+  "activationEvents": [
+    "onCommand:gpt-copytree.refresh",
+    "onCommand:gpt-copytree.export"
+  ],
   "devDependencies": {
     "@types/glob": "^8.1.0",
     "@types/mocha": "^10.0.1",
