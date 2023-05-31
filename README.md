@@ -1,71 +1,38 @@
-# gpt-copytree README
+# GPT-CopyTree
 
-This is the README for your extension "gpt-copytree". After writing up a brief description, we recommend including the following sections.
+## Overview
+
+GPT-CopyTree is a Visual Studio Code extension that provides a convenient tree view for your files and directories. This extension simplifies the process of navigating through your project files.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+* **File Tree View:** View all your files and directories in a tree structure for easy navigation.
 
-For example if there is an image subfolder under your extension project workspace:
+* **Refresh:** Instantly refresh the file tree view with the latest changes in your workspace.
 
-\!\[feature X\]\(images/feature-x.png\)
+* **Export:** Ability to export the file tree structure for documentation or other purposes.
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+* **Toggle Select:** Allows selective viewing of files and directories in the tree view.
 
-## Requirements
+## Getting Started
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+### Installation
 
-## Extension Settings
+1. Open Visual Studio Code
+2. Press `Ctrl+P` to open the Quick Open dialog
+3. Type `ext install gpt-copytree` to find and install the GPT-CopyTree extension
+4. Reload Visual Studio Code
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+### Usage
 
-For example:
+1. Once installed, the GPT-CopyTree view should be available in the activity bar on the side.
+2. To refresh the tree view, click the "Refresh" button on the top of the GPT-CopyTree view.
+3. To export the tree view, click the "Export" button on the top of the GPT-CopyTree view.
+4. To toggle the selection of files and directories in the tree view, use the "Toggle Select" command.
 
-This extension contributes the following settings:
+## Configuration
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+The extension has a character limit for each copy section which defaults to 3700. This can be modified in the settings:
 
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+```json
+"gpt-copytree.characterLimit": 4000
