@@ -18,6 +18,17 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
     }
   }
 
+  clearAllSelected(): void {
+    vscode.window.showWarningMessage('Are you sure you want to clear all selected files?', { modal: true }, 'Yes')
+    .then((userResponse) => {
+      if (userResponse === 'Yes') {
+        this.selectedItems.clear();
+        this.workspaceState.update('selectedItems', []);
+        this.refreshAll();
+      }
+    });
+  }
+
   refresh(item?: FileItem): void {
     this._onDidChangeTreeData.fire(item);
   }
@@ -113,7 +124,7 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
 
   private addHtmlSegment(textAreaContent: string, currentCharCount: number, startContent: string, endContent: string): string {
     const htmlContent = textAreaContent.replace(/\n/g, '<br>');
-    return `<div class='copyCard'><div class='tools'><span class='charCount'>${currentCharCount} characters</span><button id="copyButton" onclick="copyToClipboard(this)">Copy</button></div><code class='content'>${startContent}${htmlContent}${endContent}</code></div>`;
+    return `<div class='copyCard'><div class='tools'><span class='charCount'>${currentCharCount} characters</span><button id="copyButton" onclick="copyToClipboard(this)">Copy</button></div><code class='content'>${startContent}<br><br>${htmlContent}<br><br>${endContent}</code></div>`;
   }
 
 
@@ -149,7 +160,7 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
         continue;
       }
 
-      const relativePath = path.relative(workspaceRootPath, selectedItemPath);
+      const relativePath = `file: ${path.relative(workspaceRootPath, selectedItemPath)}`;
       if (fs.statSync(selectedItemPath).isDirectory()) {
         largeNonTextFiles.push(relativePath);
       } else {
@@ -179,8 +190,8 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
         const copyToClipboard = (button) => {
           const parent = button.parentElement.parentElement;
           const contentElement = parent.querySelector('.content');
-          const textToCopy = contentElement.innerHTML.replace(/<br>/g, '\\n');
-
+          let textToCopy = contentElement.innerHTML.replace(/<br>/g, '\\n');
+          textToCopy = textToCopy.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
           const tempTextarea = document.createElement('textarea');
           tempTextarea.value = textToCopy;
           document.body.appendChild(tempTextarea);

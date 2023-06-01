@@ -22,17 +22,17 @@
       "properties": {
         "gpt-copytree.characterLimit": {
           "type": "number",
-          "default": 12000,
+          "default": 13000,
           "description": "The character limit for each copy section."
         },
         "gpt-copytree.exportStartContent": {
           "type": "string",
-          "default": "Retain these codes, do not relay them back to me immediately.",
+          "default": "Retain these codes, do not relay them back to me immediately, I may have other requests, if discovered, please handle immediately",
           "description": "Set the starting content for the export."
         },
         "gpt-copytree.exportContinueContent": {
           "type": "string",
-          "default": "The subsequent code will follow in the next request, please wait for my instructions, GPT.",
+          "default": "The subsequent code will follow in the next message, please wait for my instructions, GPT.",
           "description": "Set the ending content for the export if more code exists."
         }
       }
@@ -72,6 +72,22 @@
         }
       },
       {
+        "command": "gpt-copytree.clear",
+        "title": "Clear Selected",
+        "icon": {
+          "light": "media/clear_inverse.svg",
+          "dark": "media/clear.svg"
+        }
+      },
+      {
+        "command": "gpt-copytree.collapseAllDirectories",
+        "title": "Collapse All Directories",
+        "icon": {
+          "light": "media/clear_inverse.svg",
+          "dark": "media/clear.svg"
+        }
+      },
+      {
         "command": "gpt-copytree.toggleSelect",
         "title": "Toggle Select"
       }
@@ -87,13 +103,24 @@
           "command": "gpt-copytree.export",
           "group": "navigation",
           "when": "view == gpt-copytree-panel"
+        },
+        {
+          "command": "gpt-copytree.clear",
+          "group": "navigation",
+          "when": "view == gpt-copytree-panel"
+        },
+        {
+          "command": "gpt-copytree.collapseAllDirectories",
+          "group": "navigation",
+          "when": "view == gpt-copytree-panel"
         }
       ]
     }
   },
   "activationEvents": [
     "onCommand:gpt-copytree.refresh",
-    "onCommand:gpt-copytree.export"
+    "onCommand:gpt-copytree.export",
+    "onCommand:gpt-copytree.clear"
   ],
   "devDependencies": {
     "@types/glob": "^8.1.0",

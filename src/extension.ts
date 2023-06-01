@@ -6,6 +6,18 @@ export function activate(context: vscode.ExtensionContext) {
   vscode.window.createTreeView('gpt-copytree-panel', { treeDataProvider: fileTreeProvider });
 
   context.subscriptions.push(
+    vscode.commands.registerCommand('gpt-copytree.clear', () => {
+      fileTreeProvider.clearAllSelected();
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand('gpt-copytree.collapseAllDirectories', () => {
+      vscode.commands.executeCommand('workbench.actions.treeView.gpt-copytree-panel.collapseAll');
+    })
+  );
+
+  context.subscriptions.push(
     vscode.commands.registerCommand('gpt-copytree.toggleSelect', (fileItem) => {
       if (fileTreeProvider.isSelected(fileItem)) {
         fileTreeProvider.deselect(fileItem);
