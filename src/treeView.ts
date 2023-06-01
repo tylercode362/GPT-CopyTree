@@ -122,9 +122,9 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
     }
   }
 
-  private addHtmlSegment(textAreaContent: string, currentCharCount: number, startContent: string, endContent: string): string {
+  private addHtmlSegment(textAreaContent: string, currentCharCount: number, startHtmlSegment: string, endHtmlSegment: string): string {
     const htmlContent = textAreaContent.replace(/\n/g, '<br>');
-    return `<div class='copyCard'><div class='tools'><span class='charCount'>${currentCharCount} characters</span><button id="copyButton" onclick="copyToClipboard(this)">Copy</button></div><code class='content'>${startContent}<br><br>${htmlContent}<br><br>${endContent}</code></div>`;
+    return `<div class='copyCard'><div class='tools'><span class='charCount'>${currentCharCount} characters</span><button id="copyButton" onclick="copyToClipboard(this)">Copy</button></div><code class='content'>${startHtmlSegment}<br><br>${htmlContent}<br><br>${endHtmlSegment}</code></div>`;
   }
 
 
@@ -143,7 +143,7 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
   }
 
   exportSelection(): string {
-    const exportStartContent = vscode.workspace.getConfiguration().get<string>('gpt-copytree.exportStartContent')! + '\n';
+    const exportstartHtmlSegment = vscode.workspace.getConfiguration().get<string>('gpt-copytree.exportstartHtmlSegment')! + '\n';
     const exportContinueContent = vscode.workspace.getConfiguration().get<string>('gpt-copytree.exportContinueContent')! + '\n';
 
     const workspaceFolders = vscode.workspace.workspaceFolders;
@@ -181,8 +181,8 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
     let currentCharCount = 0;
     let textAreaContent = '';
     let html = '<html><body>';
-    let startContent = exportStartContent
-    let endContent = exportContinueContent
+    let startHtmlSegment = exportstartHtmlSegment
+    let endHtmlSegment = exportContinueContent
 
 
     html += `
@@ -211,9 +211,9 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
 
     largeNonTextFiles.forEach(file => {
       if (currentCharCount + file.length + 1 > characterLimit) {
-        const configContentCharCount = (startContent + endContent).length
-        html += this.addHtmlSegment(textAreaContent, currentCharCount + configContentCharCount, startContent, endContent);
-        startContent = '';
+        const configContentCharCount = (startHtmlSegment + endHtmlSegment).length
+        html += this.addHtmlSegment(textAreaContent, currentCharCount + configContentCharCount, startHtmlSegment, endHtmlSegment);
+        startHtmlSegment = '';
         textAreaContent = '';
         currentCharCount = 0;
       }
@@ -226,9 +226,9 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
       lines.unshift(textFile.name);
       lines.forEach(line => {
         if (currentCharCount + line.length + 1 > characterLimit) {
-          const configContentCharCount = (startContent + endContent).length
-          html += this.addHtmlSegment(textAreaContent, currentCharCount + configContentCharCount, startContent, endContent);
-          startContent = '';
+          const configContentCharCount = (startHtmlSegment + endHtmlSegment).length
+          html += this.addHtmlSegment(textAreaContent, currentCharCount + configContentCharCount, startHtmlSegment, endHtmlSegment);
+          startHtmlSegment = '';
           textAreaContent = '';
           currentCharCount = 0;
         }
@@ -239,7 +239,7 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
     });
 
     if (textAreaContent) {
-      html += this.addHtmlSegment(textAreaContent, currentCharCount, startContent, '');
+      html += this.addHtmlSegment(textAreaContent, currentCharCount, startHtmlSegment, '');
     }
 
     html += '</body></html>';
