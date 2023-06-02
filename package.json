@@ -25,7 +25,7 @@
           "default": 13000,
           "description": "The character limit for each copy section."
         },
-        "gpt-copytree.exportStartContent": {
+        "gpt-copytree.exportStartHtmlSegment": {
           "type": "string",
           "default": "Retain these codes, do not relay them back to me immediately, I may have other requests, if discovered, please handle immediately",
           "description": "Set the starting content for the export."
@@ -34,6 +34,11 @@
           "type": "string",
           "default": "The subsequent code will follow in the next message, please wait for my instructions, GPT.",
           "description": "Set the ending content for the export if more code exists."
+        },
+        "gpt-copytree.exportNextStartContent": {
+          "type": "string",
+          "default": "This is part of the remaining code. Please remember it along with the previous message, but do not relay it back to me immediately.",
+          "description": "Set the content for the remaining code that should be remembered along with the previous message, but not immediately relayed back."
         }
       }
     },
@@ -59,32 +64,40 @@
         "command": "gpt-copytree.refresh",
         "title": "Refresh",
         "icon": {
-          "light": "media/clear_inverse.svg",
-          "dark": "media/clear.svg"
+          "light": "media/refresh.svg",
+          "dark": "media/refresh_inverse.svg"
         }
       },
       {
         "command": "gpt-copytree.export",
         "title": "Export",
         "icon": {
-          "light": "media/clear_inverse.svg",
-          "dark": "media/clear.svg"
+          "light": "media/export.svg",
+          "dark": "media/export_inverse.svg"
         }
       },
       {
         "command": "gpt-copytree.clear",
         "title": "Clear Selected",
         "icon": {
-          "light": "media/clear_inverse.svg",
-          "dark": "media/clear.svg"
+          "light": "media/clear.svg",
+          "dark": "media/clear_inverse.svg"
         }
       },
       {
         "command": "gpt-copytree.collapseAllDirectories",
         "title": "Collapse All Directories",
         "icon": {
-          "light": "media/clear_inverse.svg",
-          "dark": "media/clear.svg"
+          "light": "media/collapse.svg",
+          "dark": "media/collapse_inverse.svg"
+        }
+      },
+      {
+        "command": "gpt-copytree.openSettings",
+        "title": "Open GPT-CopyTree Settings",
+        "icon": {
+          "light": "media/settings.svg",
+          "dark": "media/settings_inverse.svg"
         }
       },
       {
@@ -95,23 +108,28 @@
     "menus": {
       "view/title": [
         {
-          "command": "gpt-copytree.refresh",
-          "group": "navigation",
-          "when": "view == gpt-copytree-panel"
-        },
-        {
           "command": "gpt-copytree.export",
-          "group": "navigation",
+          "group": "navigation@0",
           "when": "view == gpt-copytree-panel"
         },
         {
-          "command": "gpt-copytree.clear",
-          "group": "navigation",
+          "command": "gpt-copytree.refresh",
+          "group": "navigation@1",
           "when": "view == gpt-copytree-panel"
         },
         {
           "command": "gpt-copytree.collapseAllDirectories",
-          "group": "navigation",
+          "group": "navigation@2",
+          "when": "view == gpt-copytree-panel"
+        },
+        {
+          "command": "gpt-copytree.clear",
+          "group": "navigation@3",
+          "when": "view == gpt-copytree-panel"
+        },
+        {
+          "command": "gpt-copytree.openSettings",
+          "group": "navigation@4",
           "when": "view == gpt-copytree-panel"
         }
       ]
