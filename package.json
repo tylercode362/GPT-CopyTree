@@ -3,6 +3,7 @@
   "displayName": "GPT-CopyTree",
   "description": "A VSCode Extension to show files and directories in a tree view",
   "version": "0.0.1",
+  "icon": "media/logo.png",
   "engines": {
     "vscode": "^1.78.0"
   },
@@ -22,7 +23,7 @@
       "properties": {
         "gpt-copytree.characterLimit": {
           "type": "number",
-          "default": 13000,
+          "default": 12000,
           "description": "The character limit for each copy section."
         },
         "gpt-copytree.exportStartHtmlSegment": {
@@ -47,7 +48,7 @@
         {
           "id": "gpt-copytree-container",
           "title": "GPT-CopyTree",
-          "icon": "media/G.svg"
+          "icon": "media/logo.svg"
         }
       ]
     },

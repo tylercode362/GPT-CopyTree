@@ -36,3 +36,8 @@ The extension has a character limit for each copy section which defaults to 3700
 
 ```json
 "gpt-copytree.characterLimit": 4000
+
+
+### Thanks
+
+SVG Icon: https://tablericons.com/
