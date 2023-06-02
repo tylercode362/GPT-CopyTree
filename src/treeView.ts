@@ -124,7 +124,7 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
 
   private addHtmlSegment(textAreaContent: string, currentCharCount: number, startHtmlSegment: string, endHtmlSegment: string): string {
     const htmlContent = textAreaContent.replace(/\n/g, '<br>');
-    return `<div class='copyCard'><div class='tools'><span class='charCount'>${currentCharCount} characters</span><button id="copyButton" onclick="copyToClipboard(this)">Copy</button></div><code class='content'>${startHtmlSegment}<br><br>${htmlContent}<br><br>${endHtmlSegment}</code></div>`;
+    return `<div class='copyCard'><div class='tools'><span class='charCount'>${currentCharCount} characters</span><button id="copyButton" onclick="copyToClipboard(this)">Copy</button></div><code class='content'><br>${startHtmlSegment}<br><br>${htmlContent}<br><br>${endHtmlSegment}</code><br></div>`;
   }
 
 
@@ -161,7 +161,7 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
         continue;
       }
 
-      const relativePath = `file: ${path.relative(workspaceRootPath, selectedItemPath)}`;
+      const relativePath = `# ${path.relative(workspaceRootPath, selectedItemPath)}`;
       if (fs.statSync(selectedItemPath).isDirectory()) {
         largeNonTextFiles.push(relativePath);
       } else {
