@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
 import { FileTreeProvider } from './treeView';
-import { Hash } from 'crypto';
 
 export function activate(context: vscode.ExtensionContext) {
   const fileTreeProvider = new FileTreeProvider(context.workspaceState);
@@ -59,6 +58,24 @@ export function activate(context: vscode.ExtensionContext) {
         fileTreeProvider.select(fileItem);
       }
     }),
+  );
+
+  vscode.commands.registerCommand('gpt-copytree.openFile', (fileItem) => {
+    if (!fileItem.isDirectory) {
+      vscode.commands.executeCommand('vscode.open', vscode.Uri.file(fileItem.path));
+    }
+  });
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand('gpt-copytree.rename', (fileItem) => {
+      fileTreeProvider.rename(fileItem);
+    }),
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand('gpt-copytree.delete', (fileItem) => {
+      fileTreeProvider.delete(fileItem);
+    })
   );
 }
 

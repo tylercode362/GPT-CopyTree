@@ -18,15 +18,60 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
     }
   }
 
+  delete(item: FileItem): void {
+    vscode.window.showWarningMessage('Are you sure you want to delete this file?', { modal: true }, 'Yes')
+      .then((userResponse) => {
+        if (userResponse === 'Yes') {
+          fs.unlink(item.path, (err) => {
+            if (err) {
+              vscode.window.showErrorMessage('Failed to delete file.');
+            } else {
+              vscode.window.showInformationMessage('File deleted successfully.');
+              this.refresh(item.parent); // Refresh the parent to update the view
+            }
+          });
+        }
+      });
+  }
+
+  async rename(fileItem: FileItem): Promise<void> {
+    let oldUri = vscode.Uri.file(fileItem.path);
+    let oldFilePath = fileItem.path;
+    let oldFileName = path.basename(oldFilePath);
+    let oldDirPath = path.dirname(oldFilePath);
+
+    let newFileName = await vscode.window.showInputBox({
+      prompt: 'Enter new file name',
+      value: oldFileName,
+      validateInput: (value) => {
+        if (value.trim() === '') {
+          return 'The file name cannot be empty.';
+        }
+        return null;
+      },
+    });
+
+    if (newFileName) {
+      let newFilePath = path.join(oldDirPath, newFileName);
+      let newUri = vscode.Uri.file(newFilePath);
+      try {
+        await vscode.workspace.fs.rename(oldUri, newUri);
+        this.refresh();
+      } catch (err) {
+        vscode.window.showErrorMessage(`Failed to rename file: ${err}`);
+      }
+    }
+  }
+
   clearAllSelected(): void {
     vscode.window.showWarningMessage('Are you sure you want to clear all selected files?', { modal: true }, 'Yes')
-    .then((userResponse) => {
-      if (userResponse === 'Yes') {
-        this.selectedItems.clear();
-        this.workspaceState.update('selectedItems', []);
-        this.refreshAll();
-      }
-    });
+      .then((userResponse) => {
+        if (userResponse === 'Yes') {
+          this.selectedItems.clear();
+          this.workspaceState.update('selectedItems', []);
+          this.refreshAll();
+        }
+      });
   }
 
   refresh(item?: FileItem): void {
@@ -59,13 +104,14 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
 
     if (element.isDirectory) {
       treeItem.iconPath = new vscode.ThemeIcon("folder");
-
+      treeItem.contextValue = 'folder';
       const selectedCount = this.getSelectedCount(element);
       if (selectedCount > 0) {
         treeItem.description = `(${selectedCount}) selected`;
       }
     } else {
       treeItem.iconPath = new vscode.ThemeIcon("file");
+      treeItem.contextValue = 'file';
     }
 
     return treeItem;

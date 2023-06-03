@@ -2,7 +2,7 @@
   "name": "gpt-copytree",
   "displayName": "GPT-CopyTree",
   "description": "Provides a tree view display of files and directories, with a key feature of enabling easy file copying",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "publisher": "Tyler362",
   "icon": "media/logo.png",
   "engines": {
@@ -94,9 +94,41 @@
       {
         "command": "gpt-copytree.toggleSelect",
         "title": "Toggle Select"
+      },
+      {
+        "command": "gpt-copytree.openFile",
+        "title": "Open File",
+        "category": "File Operations"
+      },
+      {
+        "command": "gpt-copytree.rename",
+        "title": "Rename",
+        "category": "File Operations"
+      },
+      {
+        "command": "gpt-copytree.delete",
+        "title": "Delete",
+        "category": "File Operations"
       }
     ],
     "menus": {
+      "view/item/context": [
+        {
+          "command": "gpt-copytree.openFile",
+          "when": "view == gpt-copytree-panel && viewItem == file",
+          "group": "1_modification"
+        },
+        {
+          "command": "gpt-copytree.rename",
+          "when": "view == gpt-copytree-panel",
+          "group": "2_modification"
+        },
+        {
+          "command": "gpt-copytree.delete",
+          "when": "view == gpt-copytree-panel",
+          "group": "2_modification"
+        }
+      ],
       "view/title": [
         {
           "command": "gpt-copytree.copy",
@@ -128,8 +160,14 @@
   },
   "activationEvents": [
     "onCommand:gpt-copytree.refresh",
-    "onCommand:gpt-copytree.export",
-    "onCommand:gpt-copytree.clear"
+    "onCommand:gpt-copytree.copy",
+    "onCommand:gpt-copytree.clear",
+    "onCommand:gpt-copytree.collapseAllDirectories",
+    "onCommand:gpt-copytree.openSettings",
+    "onCommand:gpt-copytree.toggleSelect",
+    "onCommand:gpt-copytree.openFile",
+    "onCommand:gpt-copytree.rename",
+    "onCommand:gpt-copytree.delete"
   ],
   "devDependencies": {
     "@types/glob": "^8.1.0",
