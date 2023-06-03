@@ -1,8 +1,9 @@
 {
   "name": "gpt-copytree",
   "displayName": "GPT-CopyTree",
-  "description": "A VSCode Extension to show files and directories in a tree view",
-  "version": "0.0.1",
+  "description": "Provides a tree view display of files and directories, with a key feature of enabling easy file copying",
+  "version": "1.0.0",
+  "publisher": "Tyler362",
   "icon": "media/logo.png",
   "engines": {
     "vscode": "^1.78.0"
@@ -21,25 +22,14 @@
     "configuration": {
       "title": "GPT-CopyTree Settings",
       "properties": {
-        "gpt-copytree.characterLimit": {
-          "type": "number",
-          "default": 12000,
-          "description": "The character limit for each copy section."
-        },
-        "gpt-copytree.exportStartHtmlSegment": {
-          "type": "string",
-          "default": "Retain these codes, do not relay them back to me immediately, I may have other requests, if discovered, please handle immediately",
-          "description": "Set the starting content for the export."
-        },
-        "gpt-copytree.exportContinueContent": {
-          "type": "string",
-          "default": "The subsequent code will follow in the next message, please wait for my instructions, GPT.",
-          "description": "Set the ending content for the export if more code exists."
-        },
-        "gpt-copytree.exportNextStartContent": {
-          "type": "string",
-          "default": "This is part of the remaining code. Please remember it along with the previous message, but do not relay it back to me immediately.",
-          "description": "Set the content for the remaining code that should be remembered along with the previous message, but not immediately relayed back."
+        "gpt-copytree.gptTemplates": {
+          "type": "object",
+          "default": {
+            "Remember Only": "Hold onto these codes, do not transmit them back instantly. \n\n %content%",
+            "Execute Order": "%content% \n\n Execute Order: ",
+            "Just Copy": "%content%"
+          },
+          "description": "This configuration allows you to add frequently used 'gpt-copytree.gptTemplates'. The '%content%' placeholder can be used to represent the position of the copied file name and content within the template."
         }
       }
     },

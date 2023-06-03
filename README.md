@@ -1,43 +1,49 @@
-# GPT-CopyTree
+# GPT-CopyTree Visual Studio Code Extension
 
-## Overview
+## Description
 
-GPT-CopyTree is a Visual Studio Code extension that provides a convenient tree view for your files and directories. This extension simplifies the process of navigating through your project files.
+GPT-CopyTree is a Visual Studio Code extension designed to facilitate easy file copying. It provides a tree view display of your files and directories within the VS Code workspace. With GPT-CopyTree, you can easily select files, navigate your file structure, and perform copy actions with the help of custom GPT templates.
 
 ## Features
 
-* **File Tree View:** View all your files and directories in a tree structure for easy navigation.
+1. **File Tree View:** Navigate your file structure with an interactive tree view, enabling easy file and directory access right in your workspace.
 
-* **Refresh:** Instantly refresh the file tree view with the latest changes in your workspace.
+2. **File Selection:** Select files directly from the tree view. Easily toggle selection with a single click, or clear all your selected files with a dedicated command.
 
-* **Export:** Ability to export the file tree structure for documentation or other purposes.
+3. **Custom Templates:** Use custom GPT templates for your file copying tasks. Define templates with placeholders to format your copied files exactly how you want them.
 
-* **Toggle Select:** Allows selective viewing of files and directories in the tree view.
+4. **Export Functionality:** Export your selected files as a formatted string. Copy the output to your clipboard for easy pasting in your desired location.
+
+5. **Additional Commands:** Additional commands such as "Refresh", "Collapse All Directories", and "Open GPT-CopyTree Settings" provide you with full control over your workspace.
 
 ## Getting Started
 
-### Installation
+1. Install the GPT-CopyTree extension in VS Code.
 
-1. Open Visual Studio Code
-2. Press `Ctrl+P` to open the Quick Open dialog
-3. Type `ext install gpt-copytree` to find and install the GPT-CopyTree extension
-4. Reload Visual Studio Code
+2. Open your workspace, and you will see the GPT-CopyTree icon in your activity bar.
 
-### Usage
+3. Click on the icon to see a tree view of your files and directories.
 
-1. Once installed, the GPT-CopyTree view should be available in the activity bar on the side.
-2. To refresh the tree view, click the "Refresh" button on the top of the GPT-CopyTree view.
-3. To export the tree view, click the "Export" button on the top of the GPT-CopyTree view.
-4. To toggle the selection of files and directories in the tree view, use the "Toggle Select" command.
+4. Select files by clicking on them in the tree view. The selected files will be marked in the tree view for easy reference.
+
+5. Use the commands in the navigation bar above the tree view to perform actions such as "Refresh", "Export", "Clear Selected", "Collapse All Directories", and "Open GPT-CopyTree Settings".
 
 ## Configuration
 
-The extension has a character limit for each copy section which defaults to 3700. This can be modified in the settings:
+Configure the GPT-CopyTree extension by opening the settings (use the "Open GPT-CopyTree Settings" command).
 
-```json
-"gpt-copytree.characterLimit": 4000
+In the settings, you can configure the 'gpt-copytree.gptTemplates' property. This allows you to define your own custom templates for copying files. The '%content%' placeholder can be used to represent the position of the copied file name and content within the template.
 
+Default templates include:
 
-### Thanks
+- "Remember Only": Holds onto the codes without transmitting them back instantly.
+- "Execute Order": Executes an order command after the file content.
+- "Just Copy": Simply copies the file content without any additional action.
 
-SVG Icon: https://tablericons.com/
+## Contributing
+
+If you would like to contribute to the development of GPT-CopyTree, please visit the [GPT-CopyTree repository](https://github.com/tylercode362/GPT-CopyTree.git) on GitHub.
+
+## License
+
+GPT-CopyTree is released under [MIT License](https://opensource.org/licenses/MIT).

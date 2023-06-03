@@ -1,30 +1,43 @@
 import * as vscode from 'vscode';
 import { FileTreeProvider } from './treeView';
+import { Hash } from 'crypto';
 
 export function activate(context: vscode.ExtensionContext) {
   const fileTreeProvider = new FileTreeProvider(context.workspaceState);
   vscode.window.createTreeView('gpt-copytree-panel', { treeDataProvider: fileTreeProvider });
 
   vscode.commands.registerCommand('gpt-copytree.export', () => {
-    const panel = vscode.window.createWebviewPanel(
-      'gpt-copytree-export',
-      'Exported Selection',
-      vscode.ViewColumn.One,
-      {
-        enableScripts: true,
-      }
-    );
+    let copyContent = fileTreeProvider.exportSelection();
+    const quickPick = vscode.window.createQuickPick();
+    const templates = vscode.workspace.getConfiguration().get<{ [index: string]: string }>('gpt-copytree.gptTemplates') || {};
+    quickPick.items = Object.keys(templates).map(label => ({
+      label,
+      description: "Select a GPT-CopyTree Command Template"
+    }));
 
-    panel.webview.html = fileTreeProvider.exportSelection();
-  })
+    quickPick.onDidChangeSelection(selection => {
+      if (selection[0]) {
+        vscode.window.showInformationMessage(`You selected: ${selection[0].label}`);
+        const template = templates[selection[0].label];
+        const codeSection = template.replace('%content%', copyContent);
+        vscode.env.clipboard.writeText(codeSection).then(() => {
+          vscode.window.showInformationMessage(`Copied to clipboard: template is ${selection[0].label}, the content includes ${codeSection.length} characters.`);
+        });
+      }
+    });
+
+    quickPick.onDidHide(() => quickPick.dispose());
+    quickPick.show();
+  });
+
 
   vscode.commands.registerCommand('gpt-copytree.refresh', () => fileTreeProvider.refreshAll()),
 
-  context.subscriptions.push(
-    vscode.commands.registerCommand('gpt-copytree.collapseAllDirectories', () => {
-      vscode.commands.executeCommand('workbench.actions.treeView.gpt-copytree-panel.collapseAll');
-    })
-  );
+    context.subscriptions.push(
+      vscode.commands.registerCommand('gpt-copytree.collapseAllDirectories', () => {
+        vscode.commands.executeCommand('workbench.actions.treeView.gpt-copytree-panel.collapseAll');
+      })
+    );
 
   context.subscriptions.push(
     vscode.commands.registerCommand('gpt-copytree.clear', () => {
@@ -49,4 +62,4 @@ export function activate(context: vscode.ExtensionContext) {
   );
 }
 
-export function deactivate() {}
+export function deactivate() { }

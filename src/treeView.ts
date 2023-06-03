@@ -122,12 +122,6 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
     }
   }
 
-  private addHtmlSegment(textAreaContent: string, currentCharCount: number, startHtmlSegment: string, endHtmlSegment: string): string {
-    const htmlContent = textAreaContent.replace(/\n/g, '<br>');
-    return `<div class='copyCard'><div class='tools'><span class='charCount'>${currentCharCount} characters</span><button id="copyButton" onclick="copyToClipboard(this)">Copy</button></div><code class='content'><br>${startHtmlSegment}<br><br>${htmlContent}<br><br>${endHtmlSegment}</code><br></div>`;
-  }
-
-
   toggleSelect(item: FileItem): void {
     if (!item.isDirectory) {
       if (this.isSelected(item)) {
@@ -138,12 +132,8 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
     }
   }
 
-  escapeHTML(html: string) {
-    return html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  }
-
   exportSelection(): string {
-    const exportStartHtmlSegment = vscode.workspace.getConfiguration().get<string>('gpt-copytree.exportStartHtmlSegment')! + '\n';
+    const exportStartHtmlSegment = vscode.workspace.getConfiguration().get<string>('gpt-copytree.gptTemplates')! + '\n';
     const exportContinueContent = vscode.workspace.getConfiguration().get<string>('gpt-copytree.exportContinueContent')! + '\n';
     const exportNextStartContent = vscode.workspace.getConfiguration().get<string>('gpt-copytree.exportNextStartContent')! + '\n';
 
@@ -153,96 +143,33 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
     }
 
     const workspaceRootPath = workspaceFolders[0].uri.fsPath;
-    const largeNonTextFiles = [];
-    const textFiles = [];
+    let content = '';
 
     for (const selectedItemPath of Array.from(this.selectedItems)) {
       if (!fs.existsSync(selectedItemPath)) {
         continue;
       }
 
-      const relativePath = `# ${path.relative(workspaceRootPath, selectedItemPath)}`;
+      const relativePath = path.relative(workspaceRootPath, selectedItemPath);
       if (fs.statSync(selectedItemPath).isDirectory()) {
-        largeNonTextFiles.push(relativePath);
+        continue;
       } else {
-        const fileContent = fs.readFileSync(selectedItemPath);
-        if (fs.statSync(selectedItemPath).size > 10 * 1024 * 1024 || !isText(selectedItemPath, fileContent)) {
-          largeNonTextFiles.push(relativePath);
+        if (fs.statSync(selectedItemPath).size > 10 * 1024 * 1024) {
+          content += `${relativePath} \n`;
         } else {
-          const textContent = fs.readFileSync(selectedItemPath, 'utf8');
-          textFiles.push({ name: relativePath, content: this.escapeHTML(textContent) });
+          const title = `\n------- ${relativePath} -----\n`;
+          const fileContent = fs.readFileSync(selectedItemPath);
+          if (isText(selectedItemPath, fileContent)) {
+            content += `${title}} \n${fileContent}`;
+          } else {
+            content += `${relativePath} \n`;
+          }
         }
+
+        content += `\n------- end of ${relativePath} -----\n`;
       }
     }
 
-    largeNonTextFiles.sort();
-    textFiles.sort((a, b) => a.name.localeCompare(b.name));
-
-    const characterLimit = vscode.workspace.getConfiguration().get<number>('gpt-copytree.characterLimit')!;
-    let currentCharCount = 0;
-    let textAreaContent = '';
-    let html = '<html><body>';
-    let startHtmlSegment = exportStartHtmlSegment
-    let continueHtmlSegment = exportContinueContent
-
-    html += `
-      <script>
-        const copyToClipboard = (button) => {
-          const parent = button.parentElement.parentElement;
-          const contentElement = parent.querySelector('.content');
-          let textToCopy = contentElement.innerHTML.replace(/<br>/g, '\\n');
-          textToCopy = textToCopy.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
-          const tempTextarea = document.createElement('textarea');
-          tempTextarea.value = textToCopy;
-          document.body.appendChild(tempTextarea);
-
-          tempTextarea.select();
-          document.execCommand('copy');
-
-          document.body.removeChild(tempTextarea);
-
-          button.textContent = 'Copied';
-
-          setTimeout(() => {
-              button.textContent = 'Copy';
-          }, 1000);
-        }
-      </script>`;
-
-    largeNonTextFiles.forEach(file => {
-      if (currentCharCount + file.length + 1 > characterLimit) {
-        const configContentCharCount = (startHtmlSegment + continueHtmlSegment).length
-        html += this.addHtmlSegment(textAreaContent, currentCharCount + configContentCharCount, startHtmlSegment, continueHtmlSegment);
-        startHtmlSegment = exportNextStartContent;
-        textAreaContent = '';
-        currentCharCount = 0;
-      }
-      textAreaContent += file + '\n';
-      currentCharCount += file.length + 1;
-    });
-
-    textFiles.forEach((textFile, index) => {
-      const lines = textFile.content.split('\n');
-      lines.unshift(textFile.name);
-      lines.forEach(line => {
-        if (currentCharCount + line.length + 1 > characterLimit) {
-          const configContentCharCount = (startHtmlSegment + continueHtmlSegment).length
-          html += this.addHtmlSegment(textAreaContent, currentCharCount + configContentCharCount, startHtmlSegment, continueHtmlSegment);
-          startHtmlSegment = exportNextStartContent;
-          textAreaContent = '';
-          currentCharCount = 0;
-        }
-
-        textAreaContent += line + '\n';
-        currentCharCount += line.length + 1;
-      });
-    });
-
-    if (textAreaContent) {
-      html += this.addHtmlSegment(textAreaContent, currentCharCount, exportNextStartContent, '');
-    }
-
-    html += '</body></html>';
-    return html;
+    return content;
   }
 }
