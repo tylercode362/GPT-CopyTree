@@ -10,7 +10,7 @@ GPT-CopyTree is a Visual Studio Code extension designed to facilitate easy file 
 ## Features
 
 1. **File Tree View:** Navigate your file structure with an interactive tree view, enabling easy file and directory access right in your workspace.
-2. 
+
 ![tree](https://github.com/tylercode362/GPT-CopyTree/assets/22150402/5049461d-7ead-4bba-8da6-8e4efebf9406)
 
 2. **File Selection:** Select files directly from the tree view. Easily toggle selection with a single click, or clear all your selected files with a dedicated command.
@@ -21,7 +21,7 @@ GPT-CopyTree is a Visual Studio Code extension designed to facilitate easy file 
 ![Configuration](https://github.com/tylercode362/GPT-CopyTree/assets/22150402/592f025c-d987-45f7-8651-d7a6561b8977)
 ![Set the templates](https://github.com/tylercode362/GPT-CopyTree/assets/22150402/a199eb00-0bed-49a7-847e-b08cbe85bfdd)
 
-4. **Export Functionality:** Export your selected files as a formatted string. Copy the output to your clipboard for easy pasting in your desired location.
+4. **Copy Functionality:** Copy your selected files as a formatted string. The copied content can easily be pasted to your desired location.
 
 5. **Additional Commands:** Additional commands such as "Refresh", "Collapse All Directories", and "Open GPT-CopyTree Settings" provide you with full control over your workspace.
 
@@ -35,7 +35,7 @@ GPT-CopyTree is a Visual Studio Code extension designed to facilitate easy file 
 
 4. Select files by clicking on them in the tree view. The selected files will be marked in the tree view for easy reference.
 
-5. Use the commands in the navigation bar above the tree view to perform actions such as "Refresh", "Export", "Clear Selected", "Collapse All Directories", and "Open GPT-CopyTree Settings".
+5. Use the commands in the navigation bar above the tree view to perform actions such as "Refresh", "Copy", "Clear Selected", "Collapse All Directories", and "Open GPT-CopyTree Settings".
 
 ## Configuration
 
@@ -51,7 +51,9 @@ Default templates include:
 
 ## Contributing
 
-If you would like to contribute to the development of GPT-CopyTree, please visit the [GPT-CopyTree repository](https://github.com/tylercode362/GPT-CopyTree.git) on GitHub.
+If you would like to contribute to the development of GPT-CopyTree, please visit the [GPT-C
+
+opyTree repository](https://github.com/tylercode362/GPT-CopyTree.git) on GitHub.
 
 ## License
 
