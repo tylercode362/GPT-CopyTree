@@ -10,6 +10,7 @@ GPT-CopyTree is a Visual Studio Code extension designed to facilitate easy file 
 ## Features
 
 1. **File Tree View:** Navigate your file structure with an interactive tree view, enabling easy file and directory access right in your workspace.
+2. 
 ![tree](https://github.com/tylercode362/GPT-CopyTree/assets/22150402/5049461d-7ead-4bba-8da6-8e4efebf9406)
 
 2. **File Selection:** Select files directly from the tree view. Easily toggle selection with a single click, or clear all your selected files with a dedicated command.
