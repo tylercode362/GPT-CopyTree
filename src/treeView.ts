@@ -19,17 +19,20 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
   }
 
   delete(item: FileItem): void {
-    vscode.window.showWarningMessage('Are you sure you want to delete this file?', { modal: true }, 'Yes')
+    vscode.window.showWarningMessage('Are you sure you want to delete this file or directory?', { modal: true }, 'Yes')
       .then((userResponse) => {
         if (userResponse === 'Yes') {
-          fs.unlink(item.path, (err) => {
-            if (err) {
-              vscode.window.showErrorMessage('Failed to delete file.');
+          try {
+            if (fs.lstatSync(item.path).isDirectory()) {
+              this.deleteDirectoryRecursive(item.path);
             } else {
-              vscode.window.showInformationMessage('File deleted successfully.');
-              this.refresh(item.parent); // Refresh the parent to update the view
+              fs.unlinkSync(item.path);
             }
-          });
+            vscode.window.showInformationMessage('File or directory deleted successfully.');
+            this.refresh(item.parent); // Refresh the parent to update the view
+          } catch (err) {
+            vscode.window.showErrorMessage('Failed to delete file or directory.');
+          }
         }
       });
   }
@@ -85,7 +88,11 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
   getTreeItem(element: FileItem): vscode.TreeItem {
     const treeItem = new vscode.TreeItem(
       element.name,
-      element.isDirectory ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None
+      (element.isDirectory && element.parent === undefined)
+        ? vscode.TreeItemCollapsibleState.Expanded
+        : (!element.isDirectory)
+          ? vscode.TreeItemCollapsibleState.None
+          : vscode.TreeItemCollapsibleState.Collapsed
     );
 
     if (!element.isDirectory) {
@@ -102,7 +109,9 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
       }
     }
 
-    if (element.isDirectory) {
+    if (element.parent === undefined) {
+      treeItem.contextValue = 'workSpace';
+    } else if (element.isDirectory) {
       treeItem.iconPath = new vscode.ThemeIcon("folder");
       treeItem.contextValue = 'folder';
       const selectedCount = this.getSelectedCount(element);
@@ -117,13 +126,21 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
     return treeItem;
   }
 
-
   getChildren(element?: FileItem): Thenable<FileItem[]> {
     if (element) {
       return Promise.resolve(getFilesAndDirectories(element.path, element));
     } else {
-      const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
-      return Promise.resolve(workspaceFolder ? getFilesAndDirectories(workspaceFolder.uri.fsPath) : []);
+      const workspaceFolders = vscode.workspace.workspaceFolders;
+      if (workspaceFolders) {
+        const workspaceFolderItems: FileItem[] = workspaceFolders.map(workspaceFolder => ({
+          name: workspaceFolder.name,
+          path: workspaceFolder.uri.fsPath,
+          isDirectory: true
+        }));
+        return Promise.resolve(workspaceFolderItems);
+      } else {
+        return Promise.resolve([]);
+      }
     }
   }
 
@@ -158,6 +175,71 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
       }
     }
     return count;
+  }
+
+  async newFile(fileItem: FileItem): Promise<void> {
+    let filePath = fileItem.isDirectory ? fileItem.path : path.dirname(fileItem.path);
+
+    let fileName = await vscode.window.showInputBox({
+      prompt: 'Enter new file name',
+      validateInput: (value) => {
+        if (value.trim() === '') {
+          return 'The file name cannot be empty.';
+        }
+        return null;
+      },
+    });
+
+    if (fileName) {
+      let newFilePath = path.join(filePath, fileName);
+      try {
+        await vscode.workspace.fs.writeFile(vscode.Uri.file(newFilePath), new Uint8Array());
+        this.refresh(fileItem);
+        await vscode.commands.executeCommand('vscode.open', vscode.Uri.file(newFilePath));
+      } catch (err) {
+        vscode.window.showErrorMessage(`Failed to create file: ${err}`);
+      }
+    }
+  }
+
+  async newFolder(fileItem: FileItem): Promise<void> {
+    let dirPath = fileItem.isDirectory ? fileItem.path : path.dirname(fileItem.path);
+
+    let folderName = await vscode.window.showInputBox({
+      prompt: 'Enter new folder name',
+      validateInput: (value) => {
+        if (value.trim() === '') {
+          return 'The folder name cannot be empty.';
+        }
+        return null;
+      },
+    });
+
+    if (folderName) {
+      let newFolderPath = path.join(dirPath, folderName);
+      try {
+        await vscode.workspace.fs.createDirectory(vscode.Uri.file(newFolderPath));
+        this.refresh(fileItem);
+      } catch (err) {
+        vscode.window.showErrorMessage(`Failed to create folder: ${err}`);
+      }
+    }
+  }
+
+  private deleteDirectoryRecursive(dirPath: string) {
+    if (fs.existsSync(dirPath)) {
+      fs.readdirSync(dirPath).forEach((file: string) => {
+        const curPath = path.join(dirPath, file);
+        if (fs.lstatSync(curPath).isDirectory()) {
+          // this is a directory, recurse
+          this.deleteDirectoryRecursive(curPath);
+        } else {
+          // this is a file, remove it
+          fs.unlinkSync(curPath);
+        }
+      });
+      fs.rmdirSync(dirPath);
+    }
   }
 
   private refreshParents(item: FileItem): void {

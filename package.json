@@ -109,10 +109,30 @@
         "command": "gpt-copytree.delete",
         "title": "Delete",
         "category": "File Operations"
+      },
+      {
+        "command": "gpt-copytree.newFolder",
+        "title": "New Folder",
+        "category": "File Operations"
+      },
+      {
+        "command": "gpt-copytree.newFile",
+        "title": "New File",
+        "category": "File Operations"
       }
     ],
     "menus": {
       "view/item/context": [
+        {
+          "command": "gpt-copytree.newFile",
+          "when": "view == gpt-copytree-panel && viewItem == folder || viewItem == workSpace",
+          "group": "1_modification"
+        },
+        {
+          "command": "gpt-copytree.newFolder",
+          "when": "view == gpt-copytree-panel && (viewItem == folder || viewItem == workSpace)",
+          "group": "1_modification"
+        },
         {
           "command": "gpt-copytree.openFile",
           "when": "view == gpt-copytree-panel && viewItem == file",
@@ -120,13 +140,13 @@
         },
         {
           "command": "gpt-copytree.rename",
-          "when": "view == gpt-copytree-panel",
-          "group": "2_modification"
+          "when": "view == gpt-copytree-panel && (viewItem != workSpace)",
+          "group": "2_modification@0"
         },
         {
           "command": "gpt-copytree.delete",
-          "when": "view == gpt-copytree-panel",
-          "group": "2_modification"
+          "when": "view == gpt-copytree-panel && (viewItem != workSpace)",
+          "group": "2_modification@1"
         }
       ],
       "view/title": [
@@ -158,17 +178,7 @@
       ]
     }
   },
-  "activationEvents": [
-    "onCommand:gpt-copytree.refresh",
-    "onCommand:gpt-copytree.copy",
-    "onCommand:gpt-copytree.clear",
-    "onCommand:gpt-copytree.collapseAllDirectories",
-    "onCommand:gpt-copytree.openSettings",
-    "onCommand:gpt-copytree.toggleSelect",
-    "onCommand:gpt-copytree.openFile",
-    "onCommand:gpt-copytree.rename",
-    "onCommand:gpt-copytree.delete"
-  ],
+  "activationEvents": [],
   "devDependencies": {
     "@types/glob": "^8.1.0",
     "@types/mocha": "^10.0.1",

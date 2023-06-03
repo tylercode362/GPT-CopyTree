@@ -77,6 +77,18 @@ export function activate(context: vscode.ExtensionContext) {
       fileTreeProvider.delete(fileItem);
     })
   );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand('gpt-copytree.newFile', (fileItem) => {
+      fileTreeProvider.newFile(fileItem);
+    }),
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand('gpt-copytree.newFolder', (fileItem) => {
+      fileTreeProvider.newFolder(fileItem);
+    }),
+  );
 }
 
 export function deactivate() { }
