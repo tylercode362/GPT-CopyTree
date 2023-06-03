@@ -6,8 +6,8 @@ export function activate(context: vscode.ExtensionContext) {
   const fileTreeProvider = new FileTreeProvider(context.workspaceState);
   vscode.window.createTreeView('gpt-copytree-panel', { treeDataProvider: fileTreeProvider });
 
-  vscode.commands.registerCommand('gpt-copytree.export', () => {
-    let copyContent = fileTreeProvider.exportSelection();
+  vscode.commands.registerCommand('gpt-copytree.copy', () => {
+    let copyContent = fileTreeProvider.copySelection();
     const quickPick = vscode.window.createQuickPick();
     const templates = vscode.workspace.getConfiguration().get<{ [index: string]: string }>('gpt-copytree.gptTemplates') || {};
     quickPick.items = Object.keys(templates).map(label => ({
@@ -17,9 +17,9 @@ export function activate(context: vscode.ExtensionContext) {
 
     quickPick.onDidChangeSelection(selection => {
       if (selection[0]) {
-        vscode.window.showInformationMessage(`You selected: ${selection[0].label}`);
         const template = templates[selection[0].label];
         const codeSection = template.replace('%content%', copyContent);
+
         vscode.env.clipboard.writeText(codeSection).then(() => {
           vscode.window.showInformationMessage(`Copied to clipboard: template is ${selection[0].label}, the content includes ${codeSection.length} characters.`);
         });

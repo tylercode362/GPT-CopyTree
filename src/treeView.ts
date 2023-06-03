@@ -132,11 +132,7 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
     }
   }
 
-  exportSelection(): string {
-    const exportStartHtmlSegment = vscode.workspace.getConfiguration().get<string>('gpt-copytree.gptTemplates')! + '\n';
-    const exportContinueContent = vscode.workspace.getConfiguration().get<string>('gpt-copytree.exportContinueContent')! + '\n';
-    const exportNextStartContent = vscode.workspace.getConfiguration().get<string>('gpt-copytree.exportNextStartContent')! + '\n';
-
+  copySelection(): string {
     const workspaceFolders = vscode.workspace.workspaceFolders;
     if (!workspaceFolders) {
       throw new Error('No workspace folder is open');

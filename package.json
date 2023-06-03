@@ -60,11 +60,11 @@
         }
       },
       {
-        "command": "gpt-copytree.export",
-        "title": "Export",
+        "command": "gpt-copytree.copy",
+        "title": "Copy Content",
         "icon": {
-          "light": "media/export.svg",
-          "dark": "media/export_inverse.svg"
+          "light": "media/copy.svg",
+          "dark": "media/copy_inverse.svg"
         }
       },
       {
@@ -99,7 +99,7 @@
     "menus": {
       "view/title": [
         {
-          "command": "gpt-copytree.export",
+          "command": "gpt-copytree.copy",
           "group": "navigation@0",
           "when": "view == gpt-copytree-panel"
         },
