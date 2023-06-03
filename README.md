@@ -4,25 +4,25 @@
 
 GPT-CopyTree is a Visual Studio Code extension designed to facilitate easy file copying. It provides a tree view display of your files and directories within the VS Code workspace. With GPT-CopyTree, you can easily select files, navigate your file structure, and perform copy actions with the help of custom GPT templates.
 
-![截圖 2023-06-03 下午8 06 03](https://github.com/tylercode362/GPT-CopyTree/assets/22150402/0f91efc4-0f04-4de2-8495-b20fd986e498)
+![Copied for chatGPT web](https://github.com/tylercode362/GPT-CopyTree/assets/22150402/88464b65-5e73-48fd-9827-8c5c8c100a3e)
+
 
 ## Features
 
-![截圖 2023-06-03 下午8 04 43](https://github.com/tylercode362/GPT-CopyTree/assets/22150402/5049461d-7ead-4bba-8da6-8e4efebf9406)
-
 1. **File Tree View:** Navigate your file structure with an interactive tree view, enabling easy file and directory access right in your workspace.
+![tree](https://github.com/tylercode362/GPT-CopyTree/assets/22150402/5049461d-7ead-4bba-8da6-8e4efebf9406)
 
 2. **File Selection:** Select files directly from the tree view. Easily toggle selection with a single click, or clear all your selected files with a dedicated command.
 
 3. **Custom Templates:** Use custom GPT templates for your file copying tasks. Define templates with placeholders to format your copied files exactly how you want them.
 
+![Select templates](https://github.com/tylercode362/GPT-CopyTree/assets/22150402/d332e448-5e56-4709-a396-281bd974db51)
+![Configuration](https://github.com/tylercode362/GPT-CopyTree/assets/22150402/592f025c-d987-45f7-8651-d7a6561b8977)
+![Set the templates](https://github.com/tylercode362/GPT-CopyTree/assets/22150402/a199eb00-0bed-49a7-847e-b08cbe85bfdd)
+
 4. **Export Functionality:** Export your selected files as a formatted string. Copy the output to your clipboard for easy pasting in your desired location.
 
 5. **Additional Commands:** Additional commands such as "Refresh", "Collapse All Directories", and "Open GPT-CopyTree Settings" provide you with full control over your workspace.
-6. 
-![截圖 2023-06-03 下午8 05 05](https://github.com/tylercode362/GPT-CopyTree/assets/22150402/d332e448-5e56-4709-a396-281bd974db51)
-![截圖 2023-06-03 下午8 05 29](https://github.com/tylercode362/GPT-CopyTree/assets/22150402/592f025c-d987-45f7-8651-d7a6561b8977)
-![截圖 2023-06-03 下午8 05 41](https://github.com/tylercode362/GPT-CopyTree/assets/22150402/a199eb00-0bed-49a7-847e-b08cbe85bfdd)
 
 ## Getting Started
 
