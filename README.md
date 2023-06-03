@@ -27,6 +27,10 @@ GPT-CopyTree is a Visual Studio Code extension designed to facilitate easy file 
 
 6. Basic File Management: Perform fundamental file operations directly from the tree view, including "New File", "New Folder", "Rename", "Delete", and "Open File".
 
+![file management](https://github.com/tylercode362/GPT-CopyTree/assets/22150402/5e12b6aa-8f2d-4fbb-9cb5-c0e6b6a322c6)
+![folder management](https://github.com/tylercode362/GPT-CopyTree/assets/22150402/a41a051c-1404-4a68-99b3-0a9efc61d5d1)
+
+
 ## Getting Started
 
 1. Install the GPT-CopyTree extension in VS Code.
