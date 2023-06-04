@@ -2,12 +2,13 @@
   "name": "gpt-copytree",
   "displayName": "GPT-CopyTree",
   "description": "Provides a tree view display of files and directories, with a key feature of enabling easy file copying",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "publisher": "Tyler362",
   "icon": "media/logo.png",
   "engines": {
     "vscode": "^1.78.0"
   },
+  "categories": ["Formatters", "Visualization", "Programming Languages", "other"],
   "scripts": {
     "vscode:prepublish": "tsc -p ./",
     "compile": "tsc -watch -p ./",
