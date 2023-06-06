@@ -2,7 +2,7 @@
   "name": "gpt-copytree",
   "displayName": "GPT-CopyTree",
   "description": "Provides a tree view display of files and directories, with a key feature of enabling easy file copying",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "publisher": "Tyler362",
   "icon": "media/logo.png",
   "engines": {

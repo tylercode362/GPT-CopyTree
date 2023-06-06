@@ -10,10 +10,24 @@ export interface FileItem {
 }
 
 export function getFilesAndDirectories(filePath: string, parent?: FileItem): FileItem[] {
-  const itemNames = fs.readdirSync(filePath);
-  const items: FileItem[] = itemNames.map(name => {
+  let itemNames: string[];
+  try {
+    itemNames = fs.readdirSync(filePath);
+  } catch (error) {
+    console.error(`Error reading directory at ${filePath}:`, error);
+    return [];
+  }
+
+  const items = itemNames.map(name => {
     const itemPath = path.join(filePath, name);
-    const isDirectory = fs.statSync(itemPath).isDirectory();
+    let isDirectory = false;
+    try {
+      isDirectory = fs.statSync(itemPath).isDirectory();
+    } catch (error) {
+      console.error(`Error accessing file or directory at ${itemPath}:`, error);
+      // If we can't access this file or directory, we can't process it further.
+      return null;
+    }
     const item: FileItem = {
       name,
       path: itemPath,
@@ -24,6 +38,7 @@ export function getFilesAndDirectories(filePath: string, parent?: FileItem): Fil
       item.children = getFilesAndDirectories(itemPath, item);
     }
     return item;
-  });
+  }).filter((item): item is FileItem => item !== null);
+
   return items;
 }
