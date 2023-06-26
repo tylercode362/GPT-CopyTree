@@ -177,6 +177,18 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
     return count;
   }
 
+  unselectAllInDirectory(directoryItem: FileItem) {
+    if (this.isSelected(directoryItem)) {
+      this.deselect(directoryItem);
+    }
+
+    if (directoryItem.isDirectory && directoryItem.children) {
+      for (let childItem of directoryItem.children) {
+        this.unselectAllInDirectory(childItem);
+      }
+    }
+  }
+
   async newFile(fileItem: FileItem): Promise<void> {
     let filePath = fileItem.isDirectory ? fileItem.path : path.dirname(fileItem.path);
 

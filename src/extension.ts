@@ -89,6 +89,12 @@ export function activate(context: vscode.ExtensionContext) {
       fileTreeProvider.newFolder(fileItem);
     }),
   );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand('gpt-copytree.unselectAllInDirectory', (directoryItem) => {
+      fileTreeProvider.unselectAllInDirectory(directoryItem);
+    }),
+  );
 }
 
 export function deactivate() { }

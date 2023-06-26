@@ -2,7 +2,7 @@
   "name": "gpt-copytree",
   "displayName": "GPT-CopyTree",
   "description": "Provides a tree view display of files and directories, with a key feature of enabling easy file copying",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "publisher": "Tyler362",
   "icon": "media/logo.png",
   "engines": {
@@ -120,6 +120,11 @@
         "command": "gpt-copytree.newFile",
         "title": "New File",
         "category": "File Operations"
+      },
+      {
+        "command": "gpt-copytree.unselectAllInDirectory",
+        "title": "UnSelect All",
+        "category": "File Operations"
       }
     ],
     "menus": {
@@ -148,6 +153,11 @@
           "command": "gpt-copytree.delete",
           "when": "view == gpt-copytree-panel && (viewItem != workSpace)",
           "group": "2_modification@1"
+        },
+        {
+          "command": "gpt-copytree.unselectAllInDirectory",
+          "when": "view == gpt-copytree-panel && (viewItem == folder || viewItem == workSpace)",
+          "group": "3_modification"
         }
       ],
       "view/title": [
