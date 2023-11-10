@@ -296,7 +296,7 @@ export class FileTreeProvider implements vscode.TreeDataProvider<FileItem> {
           const title = `\n------- ${relativePath} -----\n`;
           const fileContent = fs.readFileSync(selectedItemPath);
           if (isText(selectedItemPath, fileContent)) {
-            content += `${title}} \n${fileContent}`;
+            content += `${title} \n${fileContent}`;
           } else {
             content += `${relativePath} \n`;
           }
